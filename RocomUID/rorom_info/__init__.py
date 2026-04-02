@@ -4,7 +4,7 @@ from gsuid_core.models import Event
 from ..utils.map.rocom_map import rocom_group_list, rocom_list, rocom_skill_list, characteristic_list, skill_list
 from .draw_info_image import draw_rocom_info
 
-sv_rc_rocom_info = SV('rc基础信息查询', pm=1)
+sv_rc_rocom_info = SV('rc基础信息查询', priority=5)
 
 @sv_rc_rocom_info.on_command('配种')
 async def get_rocom_egg_info(bot: Bot, ev: Event):

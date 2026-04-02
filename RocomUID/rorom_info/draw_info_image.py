@@ -245,13 +245,13 @@ async def draw_rocom_info(rocomname):
     if rocom_group_list[rocomname][0] != '无':
         danzu_str = ' '.join(rocom_group_list[rocomname])
         img_draw.text(
-            (91, 640),
+            (91, 600),
             f"蛋组：{danzu_str}",
             black_color,
             rc_font_28,
             'lm',
         )
-        miaoshu_h = 80
+        miaoshu_h = 40
     for line in miaoshu_para:
         img_draw.text(
             (91, 600 + miaoshu_h),
