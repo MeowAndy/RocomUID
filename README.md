@@ -29,6 +29,7 @@
 ## 丨功能
 
 <details><summary>rc图鉴 - 命令: rc图鉴迪莫</summary><p>
+<img src="https://files.seeusercontent.com/2026/04/02/bWn8/tujian.jpg"/> 
 </p></details>
 
 <details><summary>rc配种 - 命令: rc配种粉星仔 梦悠悠</summary><p>
@@ -37,6 +38,10 @@
 
 <details><summary>rc技能信息 - 命令: rc技能信息折射</summary><p>
 <img src="https://files.seeusercontent.com/2026/04/02/2vvN/jineng.jpg"/> 
+</p></details>
+
+<details><summary>rc查找精灵 - 命令: rc查找精灵 特性,最好的伙伴 技能,折射,光球 魔攻,大于,60</summary><p>
+<img src="https://files.seeusercontent.com/2026/04/02/5tvK/select_rocom.png"/> 
 </p></details>
 
 ## 丨其他
