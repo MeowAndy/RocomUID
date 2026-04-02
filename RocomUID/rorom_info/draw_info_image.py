@@ -396,8 +396,8 @@ async def draw_rocom_info(rocomname):
     img_draw.text(
         (450, bg_height + 108),
         'Created by GsCore & RocomUID & jiluoQAQ',
-        (140, 140, 140),
-        rc_font_15,
+        (100, 100, 100),
+        rc_font_18,
         'mm',
     )
     bg_img.paste(img, (40, 40), img)
