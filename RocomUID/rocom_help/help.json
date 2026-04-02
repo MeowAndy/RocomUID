@@ -1,0 +1,31 @@
+{
+  "基础服务": {
+    "desc": "",
+    "data": [
+      {
+        "name": "图鉴",
+        "desc": "查询精灵图鉴",
+        "eg": "图鉴迪莫",
+        "need_ck": false,
+        "need_sk": false,
+        "need_admin": false
+      },
+	  {
+        "name": "技能信息",
+        "desc": "查询技能信息",
+        "eg": "技能信息抓挠",
+        "need_ck": false,
+        "need_sk": false,
+        "need_admin": false
+      },
+	  {
+        "name": "配种",
+        "desc": "查询配种情况",
+        "eg": "配种[母精灵][父精灵]",
+        "need_ck": false,
+        "need_sk": false,
+        "need_admin": false
+      }
+    ]
+  }
+}
