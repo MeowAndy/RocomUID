@@ -67,8 +67,8 @@ async def get_rocom_info_img(bot: Bot, ev: Event):
 async def find_rocom_list_info(bot: Bot, ev: Event):
     args = ev.text.split()
     if len(args) < 1:
-        return await bot.send('请输入 查找精灵+查找条件[名字/属性/特性/技能/种族(生命、物攻、魔攻、物防、魔防、速度[小于/大于])] 不同的筛选条件用空格分开，类型与内容用逗号分开。\n举例：查找精灵 特性,最好的伙伴 技能,折射,光球 魔攻,大于,60', at_sender=True)
-    find_tj_list = ['名字','特性','技能','生命','物攻','物防','魔攻','魔防','速度','属性']
+        return await bot.send('请输入 查找精灵+查找条件[名字/属性/蛋组/特性/技能/种族(生命、物攻、魔攻、物防、魔防、速度[小于/大于])] 不同的筛选条件用空格分开，类型与内容用逗号分开。\n举例：查找精灵 特性,最好的伙伴 技能,折射,光球 魔攻,大于,60', at_sender=True)
+    find_tj_list = ['名字','特性','技能','生命','物攻','物防','魔攻','魔防','速度','属性','蛋组']
     zhongzu_index_list = {
         '生命':0,
         '物攻':1,
@@ -100,6 +100,10 @@ async def find_rocom_list_info(bot: Bot, ev: Event):
                 if str(iteminfo[1]) not in str(rocom_list[rocom_name][7]):
                     find_cocom_list.remove(rocom_name)
             #print(find_cocom_list)
+        if iteminfo[0] == '蛋组':
+            for rocom_name in rocom_find_list:
+                if str(iteminfo[1]) not in str(rocom_group_list[rocom_name]):
+                    find_cocom_list.remove(rocom_name)
         if iteminfo[0] == '属性':
             find_shux_list = []
             for shux_item in iteminfo:
