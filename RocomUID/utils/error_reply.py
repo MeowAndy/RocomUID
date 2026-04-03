@@ -5,6 +5,8 @@ from gsuid_core.sv import get_plugin_available_prefix
 
 prefix = get_plugin_available_prefix("RocomUID")
 
+UID_HINT = f"你还没有绑定过uid哦!\n请使用[{prefix}绑定uid123456]命令绑定!"
+
 RC_ERROR_CODE = deepcopy(ERROR_CODE)
 
 def get_error(retcode: int) -> str:

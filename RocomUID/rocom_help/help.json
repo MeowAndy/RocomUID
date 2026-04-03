@@ -1,6 +1,43 @@
 {
   "基础服务": {
-    "desc": "",
+    "desc": "绑定用户信息",
+    "data": [
+      {
+        "name": "绑定uid",
+        "desc": "绑定uid",
+        "eg": "rc绑定uid123456",
+        "need_ck": false,
+        "need_sk": false,
+        "need_admin": false
+      },
+	  {
+        "name": "绑定信息",
+        "desc": "绑定信息",
+        "eg": "rc绑定信息",
+        "need_ck": false,
+        "need_sk": false,
+        "need_admin": false
+      },
+	  {
+        "name": "绑定token",
+        "desc": "绑定token",
+        "eg": "rc绑定token[token][openid]",
+        "need_ck": true,
+        "need_sk": true,
+        "need_admin": false
+      },
+	  {
+        "name": "我的信息",
+        "desc": "我的信息",
+        "eg": "rc我的信息(测试绑定用)",
+        "need_ck": true,
+        "need_sk": true,
+        "need_admin": false
+      }
+    ]
+  },
+  "图鉴服务": {
+    "desc": "查询精灵信息",
     "data": [
       {
         "name": "图鉴",
