@@ -7,7 +7,7 @@ from PIL import Image, ImageDraw
 from ..utils.image.image_tools import get_text_line
 from gsuid_core.utils.image.convert import convert_img
 from ..utils.resource.RESOURCE_PATH import ROCOM_ICON_PATH, ROCOM_SKILL_PATH
-from ..utils.map.rocom_map import rocom_group_list, rocom_list, rocom_skill_list, characteristic_list, skill_list
+from ..utils.map.rocom_map import rocom_group_list, rocom_list, rocom_skill_list, characteristic_list, skill_list, rocom_evolution_list
 from ..utils.fonts.rocom_fonts import rc_font_15, rc_font_18, rc_font_26, rc_font_28, rc_font_32, rc_font_40
 from gsuid_core.utils.image.image_tools import draw_pic_with_ring
 
@@ -18,7 +18,8 @@ mask_bar = Image.open(TEXT_PATH / 'mask_bar.png')
 info_title_img = Image.open(TEXT_PATH / 'title.png')
 poro_bar = Image.open(TEXT_PATH / 'poro_bar.png')
 skill_title = Image.open(TEXT_PATH / 'skill_title.png')
-# up_title = Image.open(TEXT_PATH / 'up_title.png')
+right_jinhua = Image.open(TEXT_PATH / 'right_jinhua.png')
+up_title = Image.open(TEXT_PATH / 'up_title.png')
 info_text_color = (232, 222, 179)
 black_color = (0, 0, 0)
 
@@ -43,6 +44,21 @@ SHUX_LIST_DRAW = {
     '武': (255, 150, 54),
     '翼': (62, 199, 202),
     '幽': (148, 70, 236),
+}
+
+jinhua_icon_list = {
+    '1_0':360,
+    '2_0':135,
+    '2_1':585,
+    '3_0':70,
+    '3_1':360,
+    '3_2':680,
+}
+
+jinhua_text_list = {
+    '2_0':400,
+    '3_0':250,
+    '3_1':560
 }
 
 async def get_max_shuxing_num(zhongzu, shuxing_type = ''):
@@ -104,8 +120,8 @@ async def draw_rocom_info(rocomname):
     if rocom_group_list.get(rocomname, 0) != 0:
         if rocom_group_list[rocomname][0] != '无':
             miaoshu_height = miaoshu_height + 80
-    
     bg_height += miaoshu_height
+    bg_height = bg_height + 230
     bg_height = max(bg_height, 1376)
     
     bg_img = Image.open(TEXT_PATH / 'bg.jpg').convert('RGB').resize((980, bg_height + 204))
@@ -393,8 +409,43 @@ async def draw_rocom_info(rocomname):
                 jineng_temp, ((kuandu_lie + 7) * jn_x + 82, yc_y * 45 + start_height + 90), jineng_temp
             )
         yc_y = yc_y + 1
+    
+    start_y = yc_y * 45 + start_height + 110
+    img.paste(up_title, (77, start_y), up_title)
     img_draw.text(
-        (450, bg_height + 108),
+        (274, start_y + 37),
+        '进化链',
+        info_text_color,
+        rc_font_40,
+        'mm',
+    )
+    start_y = start_y + 80
+    jinhua_num = len(rocom_evolution_list[rocomname][0])
+    for index, jinhua_name in enumerate(rocom_evolution_list[rocomname][0]):
+        pokemon_img = Image.open(ROCOM_ICON_PATH / f'{jinhua_name}.png').convert('RGBA').resize((180, 180))
+        icon_x = jinhua_icon_list[f'{jinhua_num}_{index}']
+        img.paste(pokemon_img, (icon_x, start_y), pokemon_img)
+        if jinhua_num > 1 and index > 0:
+            text_x = jinhua_text_list[f'{jinhua_num}_{index - 1}']
+            img.paste(right_jinhua, (text_x, start_y + 55), right_jinhua)
+            img_draw.text(
+                (text_x + 50, start_y + 90),
+                f'{rocom_evolution_list[rocomname][1][index - 1]}',
+                black_color,
+                rc_font_28,
+                'mm',
+            )
+    if rocom_evolution_list[rocomname][2] != '':
+        start_y = start_y + 150 + 40
+        img_draw.text(
+            (450, start_y),
+            f'{rocom_evolution_list[rocomname][2]}',
+            black_color,
+            rc_font_28,
+            'mm',
+        )
+    img_draw.text(
+        (450, bg_height + 105),
         'Created by GsCore & RocomUID & jiluoQAQ',
         (100, 100, 100),
         rc_font_18,
