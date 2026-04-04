@@ -6,7 +6,7 @@ import time
 from PIL import Image, ImageDraw
 from ..utils.image.image_tools import get_text_line
 from gsuid_core.utils.image.convert import convert_img
-from ..utils.resource.RESOURCE_PATH import ROCOM_ICON_PATH, ROCOM_SKILL_PATH
+from ..utils.resource.RESOURCE_PATH import ROCOM_ICON_PATH, ROCOM_SKILL_PATH, ROCOM_CHARACTER_PATH
 from ..utils.map.rocom_map import rocom_group_list, rocom_list, rocom_skill_list, characteristic_list, skill_list, rocom_evolution_list
 from ..utils.fonts.rocom_fonts import rc_font_15, rc_font_18, rc_font_26, rc_font_28, rc_font_32, rc_font_40
 from gsuid_core.utils.image.image_tools import draw_pic_with_ring
@@ -109,8 +109,8 @@ async def draw_rocom_info(rocomname):
     
     tx_line_height = 0
     txname = rocom_list[rocomname][7]
-    txname_para = await get_text_line(f'{txname}：{characteristic_list[txname]}', 25)
-    tx_line_height += len(txname_para) * 40
+    txname_para = await get_text_line(f'{txname}：{characteristic_list[txname]}', 21)
+    tx_line_height += max(100, len(txname_para) * 40)
     
     bg_height += tx_line_height + 110
     
@@ -121,7 +121,7 @@ async def draw_rocom_info(rocomname):
         if rocom_group_list[rocomname][0] != '无':
             miaoshu_height = miaoshu_height + 80
     bg_height += miaoshu_height
-    bg_height = bg_height + 230
+    bg_height = bg_height + 270
     bg_height = max(bg_height, 1376)
     
     bg_img = Image.open(TEXT_PATH / 'bg.jpg').convert('RGB').resize((980, bg_height + 204))
@@ -287,17 +287,25 @@ async def draw_rocom_info(rocomname):
         rc_font_40,
         'mm',
     )
+    tx_icon = ROCOM_CHARACTER_PATH / f'{txname}.png'
+    if not os.path.exists(tx_icon):
+        tx_icon = ROCOM_CHARACTER_PATH / '最好的伙伴.png'
+    tx_img = Image.open(tx_icon).convert('RGBA').resize((100, 100))
+    img.paste(tx_img, (91, start_height + 90), tx_img)
+    
     tx_line_h = 0
     for line in txname_para:
         img_draw.text(
-            (91, start_height + tx_line_h + 110),
+            (210, start_height + tx_line_h + 110),
             line,
             black_color,
             rc_font_28,
             'lm',
         )
         tx_line_h += 40
-
+    
+    tx_line_h = max(100, tx_line_h)
+    
     start_height = start_height + tx_line_h + 110
     
     djjn_height = 0
@@ -425,6 +433,13 @@ async def draw_rocom_info(rocomname):
         pokemon_img = Image.open(ROCOM_ICON_PATH / f'{jinhua_name}.png').convert('RGBA').resize((180, 180))
         icon_x = jinhua_icon_list[f'{jinhua_num}_{index}']
         img.paste(pokemon_img, (icon_x, start_y), pokemon_img)
+        img_draw.text(
+            (icon_x + 90, start_y + 200),
+            f'{jinhua_name}',
+            (60, 60, 60),
+            rc_font_26,
+            'mm',
+        )
         if jinhua_num > 1 and index > 0:
             text_x = jinhua_text_list[f'{jinhua_num}_{index - 1}']
             img.paste(right_jinhua, (text_x, start_y + 55), right_jinhua)
@@ -432,11 +447,11 @@ async def draw_rocom_info(rocomname):
                 (text_x + 50, start_y + 90),
                 f'{rocom_evolution_list[rocomname][1][index - 1]}',
                 black_color,
-                rc_font_28,
+                rc_font_26,
                 'mm',
             )
     if rocom_evolution_list[rocomname][2] != '':
-        start_y = start_y + 150 + 55
+        start_y = start_y + 150 + 100
         img_draw.text(
             (450, start_y),
             f'{rocom_evolution_list[rocomname][2]}',
