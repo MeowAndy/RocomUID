@@ -21,7 +21,7 @@
 	  {
         "name": "绑定token",
         "desc": "绑定token",
-        "eg": "绑定token[token][openid]",
+        "eg": "绑定token[token]",
         "need_ck": true,
         "need_sk": true,
         "need_admin": false

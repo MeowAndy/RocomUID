@@ -436,7 +436,7 @@ async def draw_rocom_info(rocomname):
                 'mm',
             )
     if rocom_evolution_list[rocomname][2] != '':
-        start_y = start_y + 150 + 40
+        start_y = start_y + 150 + 55
         img_draw.text(
             (450, start_y),
             f'{rocom_evolution_list[rocomname][2]}',

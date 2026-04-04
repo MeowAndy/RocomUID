@@ -3,13 +3,13 @@ import json
 from gsuid_core.sv import SV
 from gsuid_core.bot import Bot
 from gsuid_core.models import Event
-from ..utils.convert import get_rocom_name
 from ..utils.rocom_api import rocom_api
 from ..utils.error_reply import UID_HINT
 from gsuid_core.logger import logger
 from ..utils.database.model import RocomUser
 from ..utils.message import send_diff_msg
 from ..utils.api_client import APIClient
+from ..utils.convert import get_rocom_name2id
 
 sv_user_info = SV('rc用户信息查询', priority=5)
 
@@ -18,7 +18,21 @@ async def get_my_user_info(bot: Bot, ev: Event):
     token = await RocomUser.get_rocom_token(ev.user_id, ev.bot_self_id)
     if not token:
         return await bot.send("用户token不存在，请绑定后再查询!")
-    data = await rocom_api.get_game_info(token=token)
+    data = await rocom_api.get_user_info(token=token)
+    await bot.send(str(data))
+
+@sv_user_info.on_command('我的精灵')
+async def get_my_user_info(bot: Bot, ev: Event):
+    args = ev.text.split()
+    if len(args) < 1:
+        return await bot.send('请输入需要查询的精灵名称', at_sender=True)
+    baseid = await get_rocom_name2id(args[0])
+    if baseid == 0:
+        return await bot.send('精灵名称不存在，请输入正确的精灵名称', at_sender=True)
+    token = await RocomUser.get_rocom_token(ev.user_id, ev.bot_self_id)
+    if not token:
+        return await bot.send("用户token不存在，请绑定后再查询!")
+    data = await rocom_api.get_rocom_pet_list(token=token, baseid=baseid)
     await bot.send(str(data))
 
 # @sv_user_info.on_command('查询信息')

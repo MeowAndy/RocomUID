@@ -1,6 +1,12 @@
 from fuzzywuzzy import process
 import pygtrie
 from .map.rocom_map import rocom_name_list
+from pathlib import Path
+import json
+
+Excel_path = Path(__file__).parent
+with Path.open(Excel_path / 'map' /'name-map.json', encoding='utf-8') as f:
+    name_id_list = json.load(f)
 
 class Roster:
     def __init__(self):
@@ -39,3 +45,12 @@ async def get_rocom_name(name):
     if guess:
         return rocom_name
     return ''
+    
+async def get_rocom_name2id(name):
+    rocom_name = await get_rocom_name(name)
+    if rocom_name == '':
+        return 0
+    for rocomid in name_id_list:
+        if name_id_list[rocomid] == rocom_name:
+            return int(rocomid)
+    return 0

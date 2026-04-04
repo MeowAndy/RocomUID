@@ -3,17 +3,62 @@ import re
 from gsuid_core.sv import SV
 from gsuid_core.bot import Bot
 from gsuid_core.models import Event
-from ..utils.map.rocom_map import rocom_name_list, rocom_group_list, rocom_list, rocom_skill_list, characteristic_list, skill_list
+from ..utils.map.rocom_map import rocom_name_list, rocom_group_list, rocom_list, rocom_skill_list, characteristic_list, skill_list, rocom_egg_build
 from .draw_info_image import draw_rocom_info
 from ..utils.convert import get_rocom_name
 
+async def is_numeric(string):
+    try:
+        float(string)
+        return True
+    except ValueError:
+        return False
+
 sv_rc_rocom_info = SV('rc基础信息查询', priority=5)
+
+@sv_rc_rocom_info.on_command('查询精灵蛋')
+async def get_rocom_egg_name(bot: Bot, ev: Event):
+    args = ev.text.split()
+    if len(args) < 2:
+        return await bot.send('请输入需要查询精灵蛋的尺寸与重量', at_sender=True)
+    length = args[0]
+    if not await is_numeric(length):
+        return await bot.send('请输入正确的尺寸信息', at_sender=True)
+    weight = args[1]
+    if not await is_numeric(weight):
+        return await bot.send('请输入正确的重量信息', at_sender=True)
+    egg_list = copy.deepcopy(rocom_egg_build)
+    find_list = []
+    for eggname in egg_list:
+        find_flag = 0
+        #print(f"{eggname},{egg_list[eggname][0][0]}-{egg_list[eggname][0][1]},{egg_list[eggname][1][0]}-{egg_list[eggname][1][1]}")
+        if egg_list[eggname][0][0] <= float(length) and float(length) <= egg_list[eggname][0][1]:
+            find_flag = find_flag + 1
+        if egg_list[eggname][1][0] <= float(weight) and float(weight) <= egg_list[eggname][1][1]:
+            find_flag = find_flag + 1
+        if find_flag == 2:
+            find_list.append(eggname)
+    if len(find_list) == 0:
+        mes = "暂时没有找到该精灵蛋的匹配信息"
+    else:
+        mes = "该精灵蛋有可能出生的精灵为\n"
+        shuling = 1
+        for rocomname in find_list:
+            mes += f"{rocomname}"
+            if shuling == 4:
+                shuling = 1
+                mes += '\n'
+            else:
+                shuling = shuling + 1
+                if rocomname != find_list[len(find_list) - 1]:
+                    mes += '、'
+    return await bot.send(mes, at_sender=True)
 
 @sv_rc_rocom_info.on_command('配种')
 async def get_rocom_egg_info(bot: Bot, ev: Event):
     args = ev.text.split()
     if len(args) < 2:
-        return await bot.send('请输入需要查询配种信息的父母精灵名称[父母精灵请输入最终进化型进行查询]', at_sender=True)
+        return await bot.send('请输入需要查询配种信息的父母精灵名称', at_sender=True)
     rocom_name1 = await get_rocom_name(args[0])
     if rocom_name1 == '':
         return await bot.send('精灵名不存在，请输入正确的精灵名称', at_sender=True)
@@ -57,7 +102,7 @@ async def get_rocom_info_img(bot: Bot, ev: Event):
     if len(args) < 1:
         return await bot.send('请输入需要查询的精灵名称', at_sender=True)
     rocom_name = await get_rocom_name(args[0])
-    if rocom_name not in rocom_list.keys():
+    if rocom_name == '':
         return await bot.send('精灵名称不存在，请输入正确的精灵名称', at_sender=True)
     
     im = await draw_rocom_info(rocom_name)

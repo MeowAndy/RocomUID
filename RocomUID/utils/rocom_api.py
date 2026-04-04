@@ -16,7 +16,7 @@ class RocomApi():
         self.act_id = act_id
         self.client = httpx.Client(timeout=10.0)  # 同步客户端
 
-    async def _post(self, req_path: str, authorization: str, payload: Dict[str, Any]) -> httpx.Response:
+    async def _post(self, req_path: str, req_type: str, authorization: str, payload: Dict[str, Any]) -> httpx.Response:
         """
         内部通用 POST 方法
         """
@@ -24,8 +24,13 @@ class RocomApi():
             "data": json.dumps({
                 **payload,
                 "req_path": req_path,
-                "req_type": "GET",   # 固定 GET 类型
-                "act_id": self.act_id
+                "req_type": req_type,
+                "act_id": self.act_id,
+                "area_id": 2,
+                "plat_id": 1,
+                "biz_code": "rocom",
+                "server_type": 1,
+                "app_name": "102802421"
             })
         }
 
@@ -40,31 +45,57 @@ class RocomApi():
         )
         response.raise_for_status()
         return response
+    
+    async def get_rocom_pet_list(
+        self,
+        token: str,
+        baseid: str = '',
+        openid: str = '',
+        account_type: str = 'qq',
+    ):
+        """
+        获取游戏信息接口
+        """
+        payload = {
+            "account_type": account_type,
+            "openid": openid,
+            "req_param":
+            {
+                "page":1,
+                "pageSize":40,
+                "searchKeyword":"",
+                "manual":False,
+                "sort":[
+                    {
+                        "field":"Count",
+                        "order":"desc"
+                    }
+                ],
+                "baseid":int(baseid) if baseid != "" else ""
+            }
+        }
 
-    async def get_game_info(
+        result = await self._post("/api/pet/list", 'POST', token, payload)
+        data = result.json()
+        # if isinstance(data, Dict):
+            # data = msgspec.convert(data["data"], type=UserInfo)
+        return data
+    
+    async def get_user_info(
         self,
         token: str,
         openid: str = '',
-        area_id: int = 2,
-        plat_id: int = 1,
-        biz_code: str = "rocom",
-        server_type: int = 1,
-        app_name: str = "102802421"
+        account_type: str = 'qq',
     ) -> Union[UserInfo, int]:
         """
         获取游戏信息接口
         """
         payload = {
-            "account_type": "qq",
+            "account_type": account_type,
             "openid": openid,
-            "area_id": area_id,
-            "plat_id": plat_id,
-            "biz_code": biz_code,
-            "server_type": server_type,
-            "app_name": app_name
         }
 
-        result = await self._post("/api/user/gameInfo", token, payload)
+        result = await self._post("/api/user/gameInfo", 'GET', token, payload)
         data = result.json()
         if isinstance(data, Dict):
             data = msgspec.convert(data["data"], type=UserInfo)
