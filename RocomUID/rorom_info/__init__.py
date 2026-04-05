@@ -16,7 +16,7 @@ async def is_numeric(string):
 
 sv_rc_rocom_info = SV('rc基础信息查询', priority=5)
 
-@sv_rc_rocom_info.on_command('查询精灵蛋')
+@sv_rc_rocom_info.on_command(('精灵蛋', '查蛋'))
 async def get_rocom_egg_name(bot: Bot, ev: Event):
     args = ev.text.split()
     if len(args) < 2:
@@ -41,7 +41,7 @@ async def get_rocom_egg_name(bot: Bot, ev: Event):
     if len(find_list) == 0:
         mes = "暂时没有找到该精灵蛋的匹配信息"
     else:
-        mes = "该精灵蛋有可能出生的精灵为\n"
+        mes = f"【查找条件】 尺寸：{length}m 重量：{weight}kg\n该精灵蛋有可能出生的精灵为\n"
         shuling = 1
         for rocomname in find_list:
             mes += f"{rocomname}"
@@ -52,6 +52,7 @@ async def get_rocom_egg_name(bot: Bot, ev: Event):
                 shuling = shuling + 1
                 if rocomname != find_list[len(find_list) - 1]:
                     mes += '、'
+        mes += "\n范围还在更新中，结果仅供参考"
     return await bot.send(mes, at_sender=True)
 
 @sv_rc_rocom_info.on_command('配种')
