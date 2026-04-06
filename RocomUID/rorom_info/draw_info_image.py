@@ -8,7 +8,7 @@ from ..utils.image.image_tools import get_text_line
 from gsuid_core.utils.image.convert import convert_img
 from ..utils.resource.RESOURCE_PATH import ROCOM_ICON_PATH, ROCOM_SKILL_PATH, ROCOM_CHARACTER_PATH
 from ..utils.map.rocom_map import rocom_group_list, rocom_list, rocom_skill_list, characteristic_list, skill_list, rocom_evolution_list
-from ..utils.fonts.rocom_fonts import rc_font_28, rc_font_30, rc_font_32, rc_font_34, rc_font_40, rc_font_64, rc_font_72, skill_font_22
+from ..utils.fonts.rocom_fonts import rc_font_28, rc_font_30, rc_font_32, rc_font_34, rc_font_40, rc_font_64, rc_font_72, skill_font_22, skill_font_32
 from gsuid_core.utils.image.image_tools import draw_pic_with_ring
 
 TEXT_PATH = Path(__file__).parent / 'texture2D'
@@ -111,14 +111,14 @@ async def draw_rocom_info(rocomname):
     tx_line_height = 0
     txname = rocom_list[rocomname][7]
     tx_content = characteristic_list.get(txname, '')
-    txname_para = await get_text_line(f'{tx_content}', 29)
+    txname_para = await get_text_line(f'{tx_content}', 28)
     tx_line_height += len(txname_para) * 40
     tx_line_height += 120
     tx_line_height = max(210, tx_line_height)
     
     bg_height += tx_line_height + 80
     miaoshu = rocom_list[rocomname][9]
-    miaoshu_para = await get_text_line(miaoshu, 32)
+    miaoshu_para = await get_text_line(miaoshu, 31)
     miaoshu_height = len(miaoshu_para) * 40
     if rocom_group_list.get(rocomname, 0) != 0:
         if rocom_group_list[rocomname][0] != '无':
@@ -301,7 +301,7 @@ async def draw_rocom_info(rocomname):
             (90, start_height),
             line,
             info_text_color,
-            rc_font_34,
+            skill_font_32,
             'lm',
         )
         start_height += 40
@@ -335,7 +335,7 @@ async def draw_rocom_info(rocomname):
             (220, start_height + tx_line_h),
             line,
             info_text_color,
-            rc_font_34,
+            skill_font_32,
             'lm',
         )
         tx_line_h += 40
