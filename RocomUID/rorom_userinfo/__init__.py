@@ -14,7 +14,7 @@ from .draw_info_image import draw_user_info
 
 sv_user_info = SV('rc用户信息查询', priority=5)
 
-@sv_user_info.on_command(('我的信息','rcuid'))
+@sv_user_info.on_command(('我的信息','uid'))
 async def get_my_user_info(bot: Bot, ev: Event):
     bind_uid = await RocomUser.select_rocom_user(ev.user_id, ev.bot_self_id)
     if not bind_uid:
