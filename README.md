@@ -32,6 +32,10 @@
 <img src="https://files.seeusercontent.com/2026/04/06/n7Ut/tujian.jpg"/> 
 </p></details>
 
+<details><summary>rc查蛋 - 命令: rc查蛋/rc精灵蛋[尺寸][重量]</summary><p>
+<img src="https://files.seeusercontent.com/2026/04/07/Pf4z/myuserinfo.jpg"/> 
+</p></details>
+
 <details><summary>rc配种 - 命令: rc配种粉星仔 梦悠悠</summary><p>
 <img src="https://files.seeusercontent.com/2026/04/02/z9Jq/peizhong.jpg"/> 
 </p></details>
