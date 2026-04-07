@@ -52,7 +52,7 @@ SHUX_LIST_DRAW = {
 }
 
 rank_name_list = {
-    "1": "",
+    "": "未参与排位",
     "2": "见习决斗家Ⅰ",
     "3": "见习决斗家Ⅱ",
     "4": "见习决斗家Ⅲ",
@@ -81,7 +81,8 @@ rank_name_list = {
 
 async def draw_user_info(ev, uid, userinfo, petinfo):
     bg_height = 900
-    bg_height += math.ceil(len(petinfo.list) / 6) * 216
+    pet_list_height = max(200, math.ceil(len(petinfo.list) / 6) * 216)
+    bg_height += pet_list_height
     
     img = Image.open(TEXT_PATH / 'bg.jpg').convert('RGB')
     if bg_height > 2417:
@@ -127,18 +128,27 @@ async def draw_user_info(ev, uid, userinfo, petinfo):
     img.paste(rank_bg, (0, 228), rank_bg)
     img_draw.text(
         (250, 281),
-        f'{rank_name_list.get(userinfo.battle.rank, "")}',
+        f'{rank_name_list.get(userinfo.battle.rank, "未参与排位")}',
         (0, 0, 0),
         skill_font_42,
         'mm',
     )
-    img_draw.text(
-        (605, 281),
-        f'{round((userinfo.battle.wins/userinfo.battle.matches), 4) * 100}%',
-        (0, 0, 0),
-        skill_font_42,
-        'mm',
-    )
+    if userinfo.battle.matches > 0:
+        img_draw.text(
+            (605, 281),
+            f'{round((userinfo.battle.wins/userinfo.battle.matches), 4) * 100}%',
+            (0, 0, 0),
+            skill_font_42,
+            'mm',
+        )
+    else:
+        img_draw.text(
+            (605, 281),
+            f'--',
+            (0, 0, 0),
+            skill_font_42,
+            'mm',
+        )
     img_draw.text(
         (785, 281),
         f'{userinfo.battle.matches}',
@@ -216,51 +226,59 @@ async def draw_user_info(ev, uid, userinfo, petinfo):
         'lm',
     )
     start_height = 840
-    for shul, rocom_item in enumerate(petinfo.list):
-        rc_y = math.floor(shul / 6)
-        rc_x = shul - (6 * rc_y)
-        rocom_img = Image.new('RGBA', (150, 216), (255, 255, 255, 0))
-        if rocom_item.PetMutation in [9, 1]:
-            overlay_img = copy.deepcopy(yise_overlay)
-            head_img = Image.open(ROCOM_HEAD_PATH / f'{rocom_item.PetBaseId}_1.png').convert('RGBA').resize((130, 130))
-        else:
-            overlay_img = copy.deepcopy(xuancai_overlay)
-            head_img = Image.open(ROCOM_HEAD_PATH / f'{rocom_item.PetBaseId}.png').convert('RGBA').resize((130, 130))
-        pet_bg_img = Image.new('RGBA', (150, 216), SHUX_LIST_DRAW[rocom_item.PetSkillDamType[0]])
-        combined_image = ImageChops.overlay(pet_bg_img, overlay_img)
-        rocom_img.paste(combined_image, (0, 0), pet_bg)
-        rocom_img.paste(pet_rocom, (0, 0), pet_rocom)
-        rocom_img.paste(head_img, (10, 35), head_img)
-        for index_sx, shuxing_item in enumerate(rocom_item.PetSkillDamType):
-            sx_img = Image.open(TEXT_PATH / '属性' / f'{shuxing_item}.png').convert('RGBA').resize((45, 45))
-            rocom_img.paste(sx_img, (index_sx * 30 - 5, -5), sx_img)
-        xm_img = Image.open(TEXT_PATH / '血脉' / f'{rocom_item.PetBlood}.png').convert('RGBA').resize((45, 45))
-        rocom_img.paste(xm_img, (110, -5), xm_img)
-        if rocom_item.PetMutation in [1,8,9]:
-            star_img = Image.open(TEXT_PATH / f'star_{rocom_item.PetMutation}.png')
-            rocom_img.paste(star_img, (6, 120), star_img)
-        level_img = Image.open(TEXT_PATH / f'level_icon.png').convert('RGBA')
-        level_draw = ImageDraw.Draw(level_img)
-        level_draw.text(
-            (37, 19),
-            f'Lv{rocom_item.SpiritLevel}',
+    if len(petinfo.list) > 0:
+        for shul, rocom_item in enumerate(petinfo.list):
+            rc_y = math.floor(shul / 6)
+            rc_x = shul - (6 * rc_y)
+            rocom_img = Image.new('RGBA', (150, 216), (255, 255, 255, 0))
+            if rocom_item.PetMutation in [9, 1]:
+                overlay_img = copy.deepcopy(yise_overlay)
+                head_img = Image.open(ROCOM_HEAD_PATH / f'{rocom_item.PetBaseId}_1.png').convert('RGBA').resize((130, 130))
+            else:
+                overlay_img = copy.deepcopy(xuancai_overlay)
+                head_img = Image.open(ROCOM_HEAD_PATH / f'{rocom_item.PetBaseId}.png').convert('RGBA').resize((130, 130))
+            pet_bg_img = Image.new('RGBA', (150, 216), SHUX_LIST_DRAW[rocom_item.PetSkillDamType[0]])
+            combined_image = ImageChops.overlay(pet_bg_img, overlay_img)
+            rocom_img.paste(combined_image, (0, 0), pet_bg)
+            rocom_img.paste(pet_rocom, (0, 0), pet_rocom)
+            rocom_img.paste(head_img, (10, 35), head_img)
+            for index_sx, shuxing_item in enumerate(rocom_item.PetSkillDamType):
+                sx_img = Image.open(TEXT_PATH / '属性' / f'{shuxing_item}.png').convert('RGBA').resize((45, 45))
+                rocom_img.paste(sx_img, (index_sx * 30 - 5, -5), sx_img)
+            xm_img = Image.open(TEXT_PATH / '血脉' / f'{rocom_item.PetBlood}.png').convert('RGBA').resize((45, 45))
+            rocom_img.paste(xm_img, (110, -5), xm_img)
+            if rocom_item.PetMutation in [1,8,9]:
+                star_img = Image.open(TEXT_PATH / f'star_{rocom_item.PetMutation}.png')
+                rocom_img.paste(star_img, (6, 120), star_img)
+            level_img = Image.open(TEXT_PATH / f'level_icon.png').convert('RGBA')
+            level_draw = ImageDraw.Draw(level_img)
+            level_draw.text(
+                (37, 19),
+                f'Lv{rocom_item.SpiritLevel}',
+                (255, 255, 255),
+                rc_font_22,
+                'mm',
+            )
+            level_img = level_img.rotate(10, expand=True)
+            rocom_img.paste(level_img, (69, 125), level_img)
+            rocom_draw = ImageDraw.Draw(rocom_img)
+            rocom_draw.text(
+                (75, 183),
+                f'{name_id_list[str(rocom_item.PetBaseId)]}',
+                (255, 255, 255),
+                skill_font_24,
+                'mm',
+            )
+            
+            img.paste(rocom_img, (150 * rc_x + 55, rc_y * 216 + start_height), rocom_img)
+    else:
+        img_draw.text(
+            (500, start_height + 100),
+            f'暂未获得炫彩及以上种类精灵',
             (255, 255, 255),
-            rc_font_22,
+            skill_font_42,
             'mm',
         )
-        level_img = level_img.rotate(10, expand=True)
-        rocom_img.paste(level_img, (69, 125), level_img)
-        rocom_draw = ImageDraw.Draw(rocom_img)
-        rocom_draw.text(
-            (75, 183),
-            f'{name_id_list[str(rocom_item.PetBaseId)]}',
-            (255, 255, 255),
-            skill_font_24,
-            'mm',
-        )
-        
-        img.paste(rocom_img, (150 * rc_x + 55, rc_y * 216 + start_height), rocom_img)
-    
     img.paste(footer, (270, bg_height - 44), footer)
     res = await convert_img(img)
     return res
