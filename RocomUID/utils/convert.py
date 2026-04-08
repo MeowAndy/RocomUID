@@ -8,6 +8,10 @@ Excel_path = Path(__file__).parent
 with Path.open(Excel_path / 'map' /'name-map.json', encoding='utf-8') as f:
     name_id_list = json.load(f)
 
+with Path.open(Excel_path / 'map' /'breeding.json', encoding='utf-8') as f:
+    breeding = json.load(f)
+    rocom_egg_conf = breeding["pet_egg_conf"]
+
 class Roster:
     def __init__(self):
         self._roster = pygtrie.CharTrie()

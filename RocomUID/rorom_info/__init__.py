@@ -5,7 +5,7 @@ from gsuid_core.bot import Bot
 from gsuid_core.models import Event
 from ..utils.map.rocom_map import rocom_name_list, rocom_group_list, rocom_list, rocom_skill_list, characteristic_list, skill_list, rocom_egg_build
 from .draw_info_image import draw_rocom_info
-from ..utils.convert import get_rocom_name
+from ..utils.convert import get_rocom_name, rocom_egg_conf
 
 async def is_numeric(string):
     try:
@@ -29,15 +29,16 @@ async def get_rocom_egg_name(bot: Bot, ev: Event):
         return await bot.send('请输入正确的重量信息', at_sender=True)
     egg_list = copy.deepcopy(rocom_egg_build)
     find_list = []
-    for eggname in egg_list:
+    for item in rocom_egg_conf:
+        if item.get('precious_egg_type', 0) > 0:
+            continue
         find_flag = 0
-        #print(f"{eggname},{egg_list[eggname][0][0]}-{egg_list[eggname][0][1]},{egg_list[eggname][1][0]}-{egg_list[eggname][1][1]}")
-        if egg_list[eggname][0][0] <= float(length) and float(length) <= egg_list[eggname][0][1]:
+        if item['height_low'] <= float(length) * 100 and float(length) * 100 <= item['height_high']:
             find_flag = find_flag + 1
-        if egg_list[eggname][1][0] <= float(weight) and float(weight) <= egg_list[eggname][1][1]:
+        if item['weight_low'] <= float(weight) * 1000 and float(weight) * 1000 <= item['weight_high']:
             find_flag = find_flag + 1
-        if find_flag == 2:
-            find_list.append(eggname)
+        if find_flag == 2 and item["name"] not in find_list:
+            find_list.append(item["name"])
     if len(find_list) == 0:
         mes = "暂时没有找到该精灵蛋的匹配信息"
     else:

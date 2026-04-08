@@ -98,7 +98,7 @@ async def draw_user_info(ev, uid, userinfo, petinfo):
         char_pic = await draw_pic_with_ring(char_pic, 152, None, False)
     else:
         char_pic = Image.open(TEXT_PATH / 'img_head.png')
-    img.paste(char_pic, (32, 28), char_pic)
+    img.paste(char_pic, (31, 28), char_pic)
     
     img_draw = ImageDraw.Draw(img)
     #写昵称与uid

@@ -293,5 +293,3 @@ class APIClient:
         except Exception as e:
             print(f"获取验证码图片发生未知错误: {e}")
             return None
-
-    

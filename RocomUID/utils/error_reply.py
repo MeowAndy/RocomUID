@@ -9,6 +9,11 @@ UID_HINT = f"你还没有绑定过uid哦!\n请使用[{prefix}绑定uid123456]命
 
 RC_ERROR_CODE = deepcopy(ERROR_CODE)
 
+RC_ERROR_CODE = {
+    4001: "您的token已过期，请重新绑定token",
+    4002: "您的token无效，请重新检查token并绑定，token获取方式请输入【rctoken帮助】查询"
+}
+
 def get_error(retcode: int) -> str:
     msg_list = [f"❌错误代码为: {retcode}"]
     if retcode in RC_ERROR_CODE:

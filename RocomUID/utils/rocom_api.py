@@ -37,9 +37,17 @@ class RocomApi():
         response = self.client.post(
             self.BASE_URL,
             params={"X-Mcube-Act-Id": self.act_id},
-            headers={
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781 NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF XWEB/14181',
                 "Content-Type": "application/x-www-form-urlencoded",
-                "Authorization": authorization
+                "Authorization": authorization,
+                'xweb_xhr': '1',
+                'sec-fetch-site': 'cross-site',
+                'sec-fetch-mode': 'cors',
+                'sec-fetch-dest': 'empty',
+                'referer': 'https://servicewechat.com/wx9a5bc2cdcaff1af1/8/page-frame.html',
+                'accept-language': 'zh-CN,zh;q=0.9',
+                'priority': 'u=1, i'
             },
             data=data
         )
@@ -159,7 +167,7 @@ class RocomApi():
         if isinstance(data["data"], Dict):
             data = msgspec.convert(data["data"], type=UserInfo)
         else:
-            data = 0
+            data = int(data['code'])
         return data
 
 rocom_api = RocomApi()
