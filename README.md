@@ -54,7 +54,24 @@
 <img src="https://files.seeusercontent.com/2026/04/07/Pf4z/myuserinfo.jpg"/> 
 </p></details>
 
+## 丨项目进度
++ 游戏工具相关
+>
+> 重写精灵数据，后续数据都将通过游戏资源进行生成后配置
+>
++ 个人信息查询相关
+>
+> 精灵列表与精灵详情图UI绘制中
+>
++ API获取相关
+>
+> 多平台token分类写入查询等待更新
+>
+> 扫码登录获取数据等待研究(需求高手研究)
+>
+
 ## 丨帮助
+
 + 关于token获取
 
 > token为洛克王国小程序的Authorization字段
