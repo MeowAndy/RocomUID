@@ -13,7 +13,7 @@ from gsuid_core.utils.image.image_tools import (
     draw_pic_with_ring,
     get_qq_avatar,
 )
-from ..utils.convert import name_id_list
+from ..utils.convert import name_id_list, get_rankid2name
 
 TEXT_PATH = Path(__file__).parent / 'texture2D'
 top_bg = Image.open(TEXT_PATH / 'top_bg.png')
@@ -49,34 +49,6 @@ SHUX_LIST_DRAW = {
     14: (255, 150, 54),
     15: (62, 199, 202),
     17: (148, 70, 236),
-}
-
-rank_name_list = {
-    "": "未参与排位",
-    "2": "见习决斗家Ⅰ",
-    "3": "见习决斗家Ⅱ",
-    "4": "见习决斗家Ⅲ",
-    "5": "见习决斗家Ⅳ",
-    "6": "见习决斗家Ⅴ",
-    "7": "初级决斗家Ⅰ",
-    "7": "初级决斗家Ⅱ",
-    "8": "初级决斗家Ⅲ",
-    "9": "初级决斗家Ⅳ",
-    "10": "初级决斗家Ⅴ",
-    "11": "中级决斗家Ⅰ",
-    "12": "中级决斗家Ⅱ",
-    "13": "中级决斗家Ⅲ",
-    "14": "中级决斗家Ⅳ",
-    "15": "中级决斗家Ⅴ",
-    "16": "高级决斗家Ⅰ",
-    "17": "高级决斗家Ⅱ",
-    "18": "高级决斗家Ⅲ",
-    "19": "高级决斗家Ⅳ",
-    "20": "高级决斗家Ⅴ",
-    "21": "大师决斗家",
-    "22": "大师决斗家",
-    "23": "大师决斗家"
-    
 }
 
 async def draw_user_info(ev, uid, userinfo, petinfo):
@@ -125,10 +97,11 @@ async def draw_user_info(ev, uid, userinfo, petinfo):
     )
     
     #画段位
+    rank_name = await get_rankid2name(userinfo.battle.rank)
     img.paste(rank_bg, (0, 228), rank_bg)
     img_draw.text(
         (250, 281),
-        f'{rank_name_list.get(userinfo.battle.rank, "未参与排位")}',
+        f'{rank_name}',
         (0, 0, 0),
         skill_font_42,
         'mm',

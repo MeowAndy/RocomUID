@@ -114,7 +114,7 @@ class RocomApi():
                         "order":"desc"
                     }
                 ],
-                "mutationFilter":[8,1,9],
+                "mutationFilter":[1,8,9],
                 "baseid":""
             }
         }

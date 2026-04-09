@@ -12,6 +12,9 @@ with Path.open(Excel_path / 'map' /'breeding.json', encoding='utf-8') as f:
     breeding = json.load(f)
     rocom_egg_conf = breeding["pet_egg_conf"]
 
+with Path.open(Excel_path / 'map' /'rank_list.json', encoding='utf-8') as f:
+    rank_list = json.load(f)
+
 class Roster:
     def __init__(self):
         self._roster = pygtrie.CharTrie()
@@ -58,3 +61,9 @@ async def get_rocom_name2id(name):
         if name_id_list[rocomid] == rocom_name:
             return int(rocomid)
     return 0
+    
+async def get_rankid2name(rankid):
+    for item in rank_list:
+        if str(rankid) == item['id']:
+            return item['name']
+    return '————'
