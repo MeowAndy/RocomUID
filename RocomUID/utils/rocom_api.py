@@ -4,11 +4,11 @@ import msgspec
 from typing import Dict, Any, Union, Literal, Optional
 from .models import UserInfo, PetList
 
-app_name_list = {
-    "qq": "102802421",
-    "qqmini": "1112470186",
-    "wx": "wx9a5bc2cdcaff1af1",
-    "wxmini": "wx9a5bc2cdcaff1af1"
+app_info_list = {
+    "qq": ["102802421", 2, 1],
+    "qqmini": ["1112470186", 2, 1],
+    "wx": ["wx9a5bc2cdcaff1af1", 1, 0],
+    "wxmini": ["wx9a5bc2cdcaff1af1", 1, 0]
 }
 
 class RocomApi():
@@ -33,13 +33,11 @@ class RocomApi():
                 "req_path": req_path,
                 "req_type": req_type,
                 "act_id": self.act_id,
-                "area_id": 2,
-                "plat_id": 1,
                 "biz_code": "rocom",
                 "server_type": 1
             })
         }
-
+        #print(str(data))
         response = self.client.post(
             self.BASE_URL,
             params={"X-Mcube-Act-Id": self.act_id},
@@ -72,7 +70,9 @@ class RocomApi():
         """
         payload = {
             "account_type": account_type,
-            "app_name": app_name_list[account_type],
+            "app_name": app_info_list[account_type][0],
+            "area_id": app_info_list[account_type][1],
+            "plat_id": app_info_list[account_type][2],
             "openid": openid,
             "req_param":
             {
@@ -108,7 +108,9 @@ class RocomApi():
         """
         payload = {
             "account_type": account_type,
-            "app_name": app_name_list[account_type],
+            "app_name": app_info_list[account_type][0],
+            "area_id": app_info_list[account_type][1],
+            "plat_id": app_info_list[account_type][2],
             "openid": openid,
             "req_param":
             {
@@ -167,7 +169,9 @@ class RocomApi():
         """
         payload = {
             "account_type": account_type,
-            "app_name": app_name_list[account_type],
+            "app_name": app_info_list[account_type][0],
+            "area_id": app_info_list[account_type][1],
+            "plat_id": app_info_list[account_type][2],
             "openid": openid,
         }
 
