@@ -4,6 +4,13 @@ import msgspec
 from typing import Dict, Any, Union, Literal, Optional
 from .models import UserInfo, PetList
 
+app_name_list = {
+    "qq": "102802421",
+    "qqmini": "1112470186",
+    "wx": "wx9a5bc2cdcaff1af1",
+    "wxmini": "wx9a5bc2cdcaff1af1"
+}
+
 class RocomApi():
     BASE_URL = "https://morefun.game.qq.com/gw2/gateway/v1/"
 
@@ -29,8 +36,7 @@ class RocomApi():
                 "area_id": 2,
                 "plat_id": 1,
                 "biz_code": "rocom",
-                "server_type": 1,
-                "app_name": "102802421"
+                "server_type": 1
             })
         }
 
@@ -66,6 +72,7 @@ class RocomApi():
         """
         payload = {
             "account_type": account_type,
+            "app_name": app_name_list[account_type],
             "openid": openid,
             "req_param":
             {
@@ -101,11 +108,12 @@ class RocomApi():
         """
         payload = {
             "account_type": account_type,
+            "app_name": app_name_list[account_type],
             "openid": openid,
             "req_param":
             {
                 "page":1,
-                "pageSize":80,
+                "pageSize":40,
                 "searchKeyword":"",
                 "manual":False,
                 "sort":[
@@ -159,6 +167,7 @@ class RocomApi():
         """
         payload = {
             "account_type": account_type,
+            "app_name": app_name_list[account_type],
             "openid": openid,
         }
 

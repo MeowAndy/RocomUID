@@ -70,6 +70,20 @@ class RocomUser(User, table=True):
         return res
     
     @classmethod
+    async def update_rocom_stoken(
+        cls: Type[T_RocomUser],
+        user_id: str,
+        bot_id: str,
+        account_type: str,
+    ) -> Union[str, int]:
+        res = await cls.update_data(
+            user_id=user_id,
+            bot_id=bot_id,
+            **{"stoken": account_type},
+        )
+        return res
+    
+    @classmethod
     async def select_rocom_user(
         cls: Type[T_RocomUser],
         user_id: str,
@@ -86,4 +100,7 @@ class RocomUser(User, table=True):
         bot_id: str,
     ) -> Union[str, int]:
         token = await cls.get_user_cookie_by_user_id(user_id, bot_id)
-        return token
+        stoken = await cls.get_user_stoken_by_user_id(user_id, bot_id)
+        if stoken is None:
+            stoken = 'qq'
+        return token, stoken

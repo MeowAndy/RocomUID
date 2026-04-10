@@ -1,5 +1,7 @@
 import re
 import json
+import asyncio
+from async_timeout import timeout
 from gsuid_core.sv import SV
 from gsuid_core.bot import Bot
 from gsuid_core.models import Event
@@ -19,15 +21,15 @@ async def get_my_user_info(bot: Bot, ev: Event):
     bind_uid = await RocomUser.select_rocom_user(ev.user_id, ev.bot_self_id)
     if not bind_uid:
         return await bot.send("你还没有绑定RC_UID哦!")
-    token = await RocomUser.get_rocom_token(ev.user_id, ev.bot_self_id)
+    token, account_type = await RocomUser.get_rocom_token(ev.user_id, ev.bot_self_id)
     if not token:
         return await bot.send("用户token不存在，请绑定后再查询!")
-    data_user = await rocom_api.get_user_info(token=token)
-    print(data_user)
+    data_user = await rocom_api.get_user_info(token=token, account_type = account_type)
+    #print(data_user)
     if isinstance(data_user, int):
         return await bot.send(get_error(data_user))
-    data_pet = await rocom_api.get_rocom_pet_list_star(token=token)
-    print(data_pet)
+    data_pet = await rocom_api.get_rocom_pet_list_star(token=token, account_type = account_type)
+    #print(data_pet)
     im = await draw_user_info(ev, bind_uid, data_user, data_pet)
     await bot.send(im, at_sender=True)
 
@@ -39,10 +41,10 @@ async def get_my_user_info(bot: Bot, ev: Event):
     baseid = await get_rocom_name2id(args[0])
     if baseid == 0:
         return await bot.send('精灵名称不存在，请输入正确的精灵名称', at_sender=True)
-    token = await RocomUser.get_rocom_token(ev.user_id, ev.bot_self_id)
+    token, account_type = await RocomUser.get_rocom_token(ev.user_id, ev.bot_self_id)
     if not token:
         return await bot.send("用户token不存在，请绑定后再查询!")
-    data = await rocom_api.get_rocom_pet_list(token=token, baseid=baseid)
+    data = await rocom_api.get_rocom_pet_list(token=token, baseid=baseid, account_type=account_type)
     await bot.send(str(data))
 
 # @sv_user_info.on_command('查询信息')
@@ -61,8 +63,9 @@ async def get_my_user_info(bot: Bot, ev: Event):
     # print(str(data))
     # #await bot.send(str(data))
 
-@sv_user_info.on_command(("绑定token","绑定openid"))
+@sv_user_info.on_command("绑定token")
 async def add_my_user_token(bot: Bot, ev: Event):
+    user_id = ev.user_id
     args = ev.text.split()
     if len(args) < 1:
         return await bot.send("请输入您需要绑定的token，用空格隔开!\n例rc绑定token xxtokenxx xxopenidxx\ntoken：用户authorization字段。\ntoken获取方式请输入【rctoken帮助】查询")
@@ -71,18 +74,58 @@ async def add_my_user_token(bot: Bot, ev: Event):
         return await bot.send("你还没有绑定RC_UID哦!")
     token = args[0]
     data = await RocomUser.update_rocom_token(ev.user_id, ev.bot_self_id, token)
-    await send_diff_msg(
-        bot,
-        data,
-        {
-            0: f"✅[洛克王国]绑定token成功!",
-            -1: f"❌[洛克王国]绑定token失败!",
-        },
-    )
-    
+    shul = 1
+    citiaobuttons = []
+    xiabiao_list = []
+    xuanze_list = ['手机QQ', '电脑QQ', '手机微信', '电脑微信']
+    xuanze_name_list = [
+        '手机QQ：QQ账号，手机获取的token',
+        '电脑QQ：QQ账号，电脑获取的token',
+        '手机微信：微信账号，手机获取的token',
+        '电脑微信：微信账号，电脑获取的token'
+    ]
+    mes = ''
+    for item_ct in xuanze_name_list:
+        mes += f"\n{shul}·{item_ct}"
+        xiabiao_list.append(str(shul))
+        shul = shul + 1
+    token_type_use = 0
+    runmynum = 0
+    try:
+        async with timeout(60):
+            while token_type_use == 0:
+                if runmynum == 0:
+                    mesg = f"token绑定成功{mes}\n请在60秒内选择您的token获取类型，默认为电脑QQ"
+                    await bot.send(mesg)
+                myresp = await bot.receive_mutiply_resp()
+                if myresp is not None:
+                    mys = myresp.text.strip()
+                    user_id_my = myresp.user_id
+                    if str(user_id_my) == str(user_id):
+                        if mys in xuanze_list or mys in xiabiao_list:
+                            if mys in xuanze_list:
+                                tongken_xuanze = mys
+                                token_type_use = 1
+                            else:
+                                mys_XB = int(mys)
+                                tongken_xuanze = xuanze_list[mys_XB - 1]
+                                token_type_use = 1
+    except asyncio.TimeoutError:
+        tongken_xuanze = '电脑QQ'
+        token_type_use = 1
+    account_type_list = {
+        '手机QQ': 'qqmini',
+        '电脑QQ': 'qq',
+        '手机微信': 'wxmini',
+        '电脑微信': 'wx'
+    }
+    account_type = account_type_list[tongken_xuanze]
+    data = await RocomUser.update_rocom_stoken(ev.user_id, ev.bot_self_id, account_type)
+    await bot.send('账号token绑定成功')
+
 @sv_user_info.on_fullmatch("token帮助")
 async def send_bind_card(bot: Bot, ev: Event):
-    mes = "token为洛克王国小程序的Authorization字段\n1·准备好常用的抓包软件(如Fiddler)\n2·打开洛克王国小程序，点击我的，打开个人信息页面\n3·在抓包软件中找到数据的链接(通常为morefun·game·qq·com/)\n4·选中后进入查看抓包信息，在信息中找到Authorization字段复制\n5·返回机器人，输入绑定token+你获取到的Authorization完成绑定"
+    mes = "token为洛克王国小程序的Authorization字段\n1·准备好常用的抓包软件(如Fiddler)\n2·打开洛克王国小程序，点击我的，打开个人信息页面\n3·在抓包软件中找到数据的链接(通常为morefun·game·qq·com/)\n4·选中后进入查看抓包信息，在信息中找到Authorization字段复制\n5·返回机器人，输入rc绑定token+你获取到的Authorization完成绑定"
     await bot.send(mes)
 
 @sv_user_info.on_fullmatch("绑定信息")

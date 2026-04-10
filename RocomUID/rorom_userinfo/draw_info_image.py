@@ -247,8 +247,8 @@ async def draw_user_info(ev, uid, userinfo, petinfo):
     else:
         img_draw.text(
             (500, start_height + 100),
-            f'暂未获得炫彩及以上种类精灵',
-            (255, 255, 255),
+            f'暂未获取到炫彩及以上种类精灵的详细数据',
+            info_text_color,
             skill_font_42,
             'mm',
         )
