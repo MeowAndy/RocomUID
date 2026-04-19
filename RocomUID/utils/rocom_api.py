@@ -1,6 +1,7 @@
 import json
 import httpx
 import msgspec
+import time
 from typing import Dict, Any, Union, Literal, Optional
 from .models import UserInfo, PetList
 
@@ -10,6 +11,67 @@ app_info_list = {
     "wx": ["wx9a5bc2cdcaff1af1", 1, 0],
     "wxmini": ["wx9a5bc2cdcaff1af1", 1, 0]
 }
+
+class WegameApi():
+    BASE_URL = "https://wegame.shallow.ink/api/v1/games/rocom/"
+    
+    def __init__(self, wegame_api_key: str = "sk-ff14f964051a5c966564e29b5bd3a768"):
+        """
+        初始化客户端
+        :param authorization: QQ 授权 token (Bearer JWT)
+        :param act_id: 活动 ID
+        """
+        self.wegame_api_key = wegame_api_key
+        self.client = httpx.Client(timeout=10.0)  # 同步客户端
+    
+    async def _post(self, req_path: str, params: Dict[str, Any]) -> httpx.Response:
+        response = self.client.get(
+            f"{self.BASE_URL}{req_path}",
+            params=params,
+            headers = {
+                'X-API-Key': self.wegame_api_key,
+            }
+        )
+        response.raise_for_status()
+        return response
+    
+    async def get_merchant_info(self, refresh: bool = False):
+        """
+        获取游戏信息接口
+        """
+        params = {"refresh": "true" if refresh else "false"}
+        nowtime = time.time() * 1000
+        result = await self._post("merchant/info", params)
+        data = result.json()
+        activities = data['data'].get("merchantActivities")
+        if activities is None:
+            activities = data['data'].get("merchant_activities")
+        activity = activities[0] if activities else {}
+        props = activity.get("get_props", [])
+        products = []
+        
+        async def is_active(item: Dict[str, Any]) -> bool:
+            start_time = item.get("start_time")
+            end_time = item.get("end_time")
+            if start_time is None or end_time is None:
+                return True
+            try:
+                return int(start_time) <= nowtime < int(end_time)
+            except (TypeError, ValueError):
+                return True
+        
+        for item in props:
+            if not await is_active(item):
+                continue
+            products.append(
+                {
+                    "name": item.get("name", "未知商品"),
+                    "image": item.get("icon_url", None),
+                    "endtime": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(item['end_time'])/1000))
+                }
+            )
+        
+        return products
 
 class RocomApi():
     BASE_URL = "https://morefun.game.qq.com/gw2/gateway/v1/"
@@ -184,3 +246,5 @@ class RocomApi():
         return data
 
 rocom_api = RocomApi()
+
+wegame_api = WegameApi()

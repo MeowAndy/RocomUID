@@ -36,6 +36,19 @@
       }
     ]
   },
+  "查询推送服务": {
+    "desc": "查询推送服务",
+    "data": [
+      {
+        "name": "远行商人",
+        "desc": "远行商人",
+        "eg": "远行商人",
+        "need_ck": false,
+        "need_sk": false,
+        "need_admin": false
+      }
+    ]
+  },
   "图鉴服务": {
     "desc": "查询精灵信息",
     "data": [
