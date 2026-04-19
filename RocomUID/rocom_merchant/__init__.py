@@ -2,6 +2,7 @@ import re
 import json
 import time
 import asyncio
+import pytz
 from gsuid_core.sv import SV
 from gsuid_core.bot import Bot
 from gsuid_core.models import Event
@@ -41,6 +42,7 @@ async def refresh_merchant_info():
     this_hour = now.hour
     if this_hour not in [8, 12, 16, 20]:
         return
+    await asyncio.sleep(10)
     merchant_info = await wegame_api.get_merchant_info(refresh=True)
     mesg = "远行商人商品刷新了："
     for item in merchant_info:

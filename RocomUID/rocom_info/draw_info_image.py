@@ -68,11 +68,14 @@ async def get_max_shuxing_num(zhongzu, shuxing_type = ''):
     jichu_num = (zhongzu + 30)/2 + 10
     #计算洛克系数 (种族值 + 个体值/2)/100
     xishu = (zhongzu + 30)/100
+    #设置最大成长值(等级 - 10)
+    chengzhang_num = 50
     #生命系数计算翻倍((种族值 + 个体值/2)/100) * 2 + 1
     if shuxing_type == 'HP':
         xishu = xishu * 2 + 1
+        chengzhang_num = 100
     #计算属性最大值向上取整
-    shuxing_num = math.floor((jichu_num + (xishu * 60)) * 1.2 + 50)
+    shuxing_num = math.floor((jichu_num + (xishu * 60)) * 1.2 + chengzhang_num)
     return shuxing_num
 
 async def get_min_shuxing_num(zhongzu, shuxing_type = ''):
@@ -80,11 +83,14 @@ async def get_min_shuxing_num(zhongzu, shuxing_type = ''):
     jichu_num = zhongzu/2 + 10
     #计算洛克系数 (种族值 + 个体值/2)/100
     xishu = zhongzu/100
+    #设置最大成长值(等级 - 10)
+    chengzhang_num = 50
     #生命系数计算翻倍((种族值 + 个体值/2)/100) * 2 + 1
     if shuxing_type == 'HP':
         xishu = xishu * 2 + 1
+        chengzhang_num = 100
     #计算属性最小值向下取整
-    shuxing_num = math.floor((jichu_num + (xishu * 60)) * 0.9 + 50)
+    shuxing_num = math.floor((jichu_num + (xishu * 60)) * 0.9 + chengzhang_num)
     return shuxing_num
 
 async def draw_rocom_info(rocomname):
