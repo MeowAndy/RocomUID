@@ -3,7 +3,7 @@
 <p align="center">
   <a href="https://github.com/jiluoQAQ/RocomUID"><img src="https://files.seeusercontent.com/2026/04/02/Knq0/ICON.png" width="256" height="256" alt="RocomUID"></a>
 </p>
-<h1 align = "center">RocomUID 0.0.1</h1>
+<h1 align = "center">RocomUID 1.0.0</h1>
 <h4 align = "center">🚧支持OneBot(QQ)、QQ频道、微信、开黑啦、Telegram的全功能洛克王国Bot插件🚧</h4>
 <div align = "center">
         <a href="https://docs.sayu-bot.com/" target="_blank">安装文档</a>
@@ -57,7 +57,7 @@
 </p></details>
 
 ## 丨部分功能使用说明
-+关于远行商人功能
++ 关于远行商人功能
 >
 >使用远行商人功能需要首次启动后去往gscore网站后台输入wegame_api_key后重启core才能使用
 >
