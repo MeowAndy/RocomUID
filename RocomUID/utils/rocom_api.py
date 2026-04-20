@@ -4,6 +4,7 @@ import msgspec
 import time
 from typing import Dict, Any, Union, Literal, Optional
 from .models import UserInfo, PetList
+from ..rocom_config.rocom_config import RC_CONFIG
 
 app_info_list = {
     "qq": ["102802421", 2, 1],
@@ -15,7 +16,7 @@ app_info_list = {
 class WegameApi():
     BASE_URL = "https://wegame.shallow.ink/api/v1/games/rocom/"
     
-    def __init__(self, wegame_api_key: str = "sk-ff14f964051a5c966564e29b5bd3a768"):
+    def __init__(self, wegame_api_key: str = ""):
         """
         初始化客户端
         :param authorization: QQ 授权 token (Bearer JWT)
@@ -246,5 +247,5 @@ class RocomApi():
         return data
 
 rocom_api = RocomApi()
-
-wegame_api = WegameApi()
+wegame_api_key: str = RC_CONFIG.get_config("RC_wegame_key").data
+wegame_api = WegameApi(wegame_api_key = wegame_api_key)
