@@ -11,6 +11,7 @@ from ..utils.rocom_api import wegame_api
 from gsuid_core.subscribe import gs_subscribe
 from gsuid_core.aps import scheduler
 from ..utils.error_reply import prefix as P
+from ..rocom_config.rocom_config import RC_CONFIG
 
 sv_merchant = SV('rc远行商人事件', priority=5)
 
@@ -32,7 +33,14 @@ async def refresh_merchant_info():
     this_hour = now.hour
     if this_hour not in [8, 12, 16, 20]:
         return
-    merchant_info = await wegame_api.get_merchant_info(refresh=True)
+    jishu = 0
+    merchant_info = []
+    merchant_cd = int(RC_CONFIG.get_config("RC_merchant_cd").data)
+    while len(merchant_info) == 0 and jishu < 20:
+        await asyncio.sleep(merchant_cd)
+        jishu = jishu + 1
+        print(f"正在进行第{jishu}次数据获取")
+        merchant_info = await wegame_api.get_merchant_info(refresh=True)
     mesg = "远行商人商品刷新了："
     for item in merchant_info:
         mesg += f"\n{item['name']} 结束时间：{item['endtime']}"
