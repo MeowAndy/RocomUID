@@ -27,7 +27,7 @@ async def get_merchant_info_list(bot: Bot, ev: Event):
     await bot.send(mesg, at_sender=True)
 
 # 每日定点执行远行商人推送
-@scheduler.scheduled_job('cron', hour ='*', minute='05')
+@scheduler.scheduled_job('cron', hour ='*')
 async def refresh_merchant_info():
     now = datetime.now(pytz.timezone('Asia/Shanghai'))
     this_hour = now.hour
