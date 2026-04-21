@@ -1,10 +1,15 @@
 import copy
 import re
+import os
 from gsuid_core.sv import SV
 from gsuid_core.bot import Bot
 from gsuid_core.models import Event
-from ..utils.map.rocom_map import rocom_name_list, rocom_group_list, rocom_list, rocom_skill_list, characteristic_list, skill_list, rocom_egg_build
+from PIL import Image, ImageDraw
+from gsuid_core.utils.image.convert import convert_img
+from ..utils.resource.RESOURCE_PATH import ROCOM_ICON_PATH
+from ..utils.map.rocom_map import rocom_name_list, rocom_group_list, rocom_list, rocom_skill_list, characteristic_list, skill_list, rocom_egg_build, rocom_evolution_list
 from .draw_info_image import draw_rocom_info
+from gsuid_core.segment import MessageSegment, _image_to_local_url
 from ..utils.convert import get_rocom_name, rocom_egg_conf
 
 async def is_numeric(string):
@@ -45,22 +50,27 @@ async def get_rocom_egg_name(bot: Bot, ev: Event):
         mes = f"【查找条件】 尺寸：{length}m 重量：{weight}kg\n该精灵蛋有可能出生的精灵为\n"
         shuling = 1
         for rocomname in find_list:
-            mes += f"{rocomname}"
-            if shuling == 4:
-                shuling = 1
-                mes += '\n'
-            else:
-                shuling = shuling + 1
-                if rocomname != find_list[len(find_list) - 1]:
-                    mes += '、'
+            icon_src = ROCOM_ICON_PATH / f'{rocomname}.png'
+            if not os.path.exists(icon_src):
+                continue
+            rocom_img = Image.open(icon_src).convert('RGBA').resize((500, 500))
+            im = Image.new("RGB", (500, 500), (255, 255, 255))
+            dtbox = (0, 0)
+            im.paste(rocom_img, dtbox, mask=rocom_img)
+            im = await convert_img(im)
+            url = await _image_to_local_url(im)
+            img_url = url[0].data.replace("link://", "")
+            mes += f"\n![图片 #36px #36px]({img_url})"
+            mes += f" [{rocomname}](mqqapi://aio/inlinecmd?command=rc图鉴{rocomname}&reply=false&enter=true)"
         mes += "\n范围还在更新中，结果仅供参考"
-    return await bot.send(mes, at_sender=True)
+    mes += "\n[再次查询](mqqapi://aio/inlinecmd?command=rc精灵蛋&reply=false)"
+    await bot.send(MessageSegment.markdown(mes))
 
 @sv_rc_rocom_info.on_command('配种')
 async def get_rocom_egg_info(bot: Bot, ev: Event):
     args = ev.text.split()
     if len(args) < 2:
-        return await bot.send('请输入需要查询配种信息的父母精灵名称', at_sender=True)
+        return await bot.send('请输入需要查询配种信息的父母精灵名称[父母精灵请输入最终进化型进行查询]', at_sender=True)
     rocom_name1 = await get_rocom_name(args[0])
     if rocom_name1 == '':
         return await bot.send('精灵名不存在，请输入正确的精灵名称', at_sender=True)
@@ -104,11 +114,24 @@ async def get_rocom_info_img(bot: Bot, ev: Event):
     if len(args) < 1:
         return await bot.send('请输入需要查询的精灵名称', at_sender=True)
     rocom_name = await get_rocom_name(args[0])
-    if rocom_name == '':
+    if rocom_name not in rocom_list.keys():
         return await bot.send('精灵名称不存在，请输入正确的精灵名称', at_sender=True)
     
     im = await draw_rocom_info(rocom_name)
-    await bot.send(im, at_sender=True)
+    url = await _image_to_local_url(im)
+    img_url = url[0].data.replace("link://", "")
+    size = url[1].data
+    mes = f"![图片 #{size[0]}px #{size[1]}px]({img_url})"
+    if len(rocom_evolution_list[rocom_name][0]) > 1:
+        mes += f"\n查询图鉴："
+        for name in rocom_evolution_list[rocom_name][0]:
+            if name != rocom_name:
+                mes += f"[{name}](mqqapi://aio/inlinecmd?command=rc图鉴{name}&reply=false&enter=true) "
+    if len(rocom_group_list[rocom_name]) > 0:
+        mes += f"\n查询蛋组："
+        for groupname in rocom_group_list[rocom_name]:
+            mes += f"[{groupname}](mqqapi://aio/inlinecmd?command=rc查找精灵蛋组,{groupname}&reply=false&enter=true) "
+    await bot.send(MessageSegment.markdown(mes))
     
 @sv_rc_rocom_info.on_command('查找精灵')
 async def find_rocom_list_info(bot: Bot, ev: Event):
@@ -199,7 +222,7 @@ async def find_rocom_list_info(bot: Bot, ev: Event):
         else:
             shuling = 1
             for rocomname in find_cocom_list:
-                mes += f"{rocomname}"
+                mes += f"[{rocomname}](mqqapi://aio/inlinecmd?command=rc图鉴{rocomname}&reply=false&enter=true)"
                 if shuling == 4:
                     shuling = 1
                     mes += '\n'
@@ -209,4 +232,4 @@ async def find_rocom_list_info(bot: Bot, ev: Event):
                         mes += '、'
     else:
         mes = '没有查找到符合您输入条件的精灵'
-    await bot.send(mes)
+    await bot.send(MessageSegment.markdown(mes))

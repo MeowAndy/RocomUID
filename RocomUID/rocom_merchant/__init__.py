@@ -37,7 +37,7 @@ async def refresh_merchant_info():
     merchant_info = []
     merchant_cd = int(RC_CONFIG.get_config("RC_merchant_cd").data)
     while len(merchant_info) == 0 and jishu < 20:
-        await asyncio.sleep(20)
+        await asyncio.sleep(merchant_cd)
         jishu = jishu + 1
         print(f"正在进行第{jishu}次数据获取")
         merchant_info = await wegame_api.get_merchant_info(refresh=True)
