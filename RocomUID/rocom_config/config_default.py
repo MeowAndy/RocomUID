@@ -17,5 +17,21 @@ CONFIG_DEFAULT: Dict[str, GSC] = {
         "wegame后台数据key",
         "使用wegame获取数据的key",
         "",
+    ),
+    "RC_merchant_cd": GsStrConfig(
+        "远行商人推送伦查间隔（s）",
+        "远行商人推送未获取到信息时再次查询间隔时间",
+        "30",
+        options=[
+            "10",
+            "20",
+            "30",
+            "40",
+            "50",
+            "60",
+            "70",
+            "80",
+            "90",
+        ],
     )
 }
