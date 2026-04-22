@@ -404,7 +404,6 @@ class WegameApi():
                 return int(start_time) <= nowtime < int(end_time)
             except (TypeError, ValueError):
                 return True
-        
         for item in props:
             if not await is_active(item):
                 continue
@@ -412,7 +411,8 @@ class WegameApi():
                 {
                     "name": item.get("name", "未知商品"),
                     "image": item.get("icon_url", None),
-                    "endtime": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(item['end_time'])/1000))
+                    "starttime": time.strftime("%m月%d日 %H:%M", time.localtime(int(item['start_time'])/1000)),
+                    "endtime": time.strftime("%H:%M", time.localtime(int(item['end_time'])/1000)),
                 }
             )
         

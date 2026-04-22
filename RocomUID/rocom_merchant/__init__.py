@@ -12,6 +12,7 @@ from gsuid_core.subscribe import gs_subscribe
 from gsuid_core.aps import scheduler
 from ..utils.error_reply import prefix as P
 from ..rocom_config.rocom_config import RC_CONFIG
+from .draw_info_image import draw_merchant_info
 
 sv_merchant = SV('rc远行商人事件', priority=5)
 
@@ -20,11 +21,8 @@ async def get_merchant_info_list(bot: Bot, ev: Event):
     merchant_info = await wegame_api.get_merchant_info(refresh=True)
     if len(merchant_info) == 0:
         return await bot.send(f"远行商人商品未刷新\n可输入[{P}开启远行商人]订阅远行商人商品信息推送", at_sender=True)
-    mesg = "当前商人商品："
-    for item in merchant_info:
-        mesg += f"\n{item['name']} 结束时间：{item['endtime']}"
-    mesg += f"\n可输入[{P}开启远行商人]订阅远行商人商品信息推送"
-    await bot.send(mesg, at_sender=True)
+    im = await draw_merchant_info(merchant_info)
+    await bot.send(im, at_sender=True)
 
 @sv_merchant.on_command(('商人'))
 async def get_merchant_info_list_cs(bot: Bot, ev: Event):
@@ -46,9 +44,7 @@ async def refresh_merchant_info():
         jishu = jishu + 1
         print(f"正在进行第{jishu}次数据获取")
         merchant_info = await wegame_api.get_merchant_info(refresh=True)
-    mesg = "远行商人商品刷新了："
-    for item in merchant_info:
-        mesg += f"\n{item['name']} 结束时间：{item['endtime']}"
+    im = await draw_merchant_info(merchant_info)
     datas = await gs_subscribe.get_subscribe('[洛克王国] 远行商人')
     for data in datas:
-        await data.send(mesg)
+        await data.send(im)

@@ -40,6 +40,8 @@ rc_font_70 = rocom_font_origin(70)
 rc_font_72 = rocom_font_origin(72)
 rc_font_84 = rocom_font_origin(84)
 
+skill_font_16 = skill_font_origin(16)
+skill_font_18 = skill_font_origin(18)
 skill_font_20 = skill_font_origin(20)
 skill_font_22 = skill_font_origin(22)
 skill_font_24 = skill_font_origin(24)
