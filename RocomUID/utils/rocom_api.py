@@ -115,7 +115,7 @@ class WegameApi():
                 json=json_data,
                 params=params,
             )
-            
+            print(resp)
             # 检查响应状态码
             if resp.status_code != 200:
                 logger.warning(f"[Rocom API] {path} HTTP 错误: {resp.status_code}")
@@ -157,6 +157,62 @@ class WegameApi():
         return cleaned.strip()
     
     # ─── 登录相关 ───
+    
+    async def wechat_qr_login(
+        self, user_identifier: str = ""
+    ) -> Optional[Dict]:
+        """发起微信扫码登录，返回 frameworkToken + qr_image (URL)"""
+        params = {"client_type": "bot", "client_id": "gscore"}
+        if user_identifier:
+            params["user_identifier"] = self._sanitize_uid(user_identifier)
+        return await self._get(
+            "/api/v1/login/wegame/wechat/qr",
+            self._wegame_headers(user_identifier=user_identifier),
+            params=params,
+        )
+    
+    async def wechat_qr_status(
+        self, fw_token: str, user_identifier: str = ""
+    ) -> Optional[Dict]:
+        """轮询微信扫码状态"""
+        params = {}
+        if user_identifier:
+            params["user_identifier"] = self._sanitize_uid(user_identifier)
+        return await self._get(
+            "/api/v1/login/wegame/wechat/status",
+            self._wegame_headers(
+                fw_token, user_identifier=user_identifier
+            ),
+            params=params,
+        )
+    
+    async def get_qq_token(
+        self, fw_token: str, user_identifier: str = ""
+    ) -> Optional[Dict]:
+        """查询 QQ 扫码凭证"""
+        user_identifier = self._sanitize_uid(user_identifier)
+        params = {}
+        if user_identifier:
+            params["user_identifier"] = user_identifier
+        return await self._get(
+            "/api/v1/login/wegame/token",
+            self._wegame_headers(fw_token, user_identifier),
+            params=params,
+        )
+
+    async def get_wechat_token(
+        self, fw_token: str, user_identifier: str = ""
+    ) -> Optional[Dict]:
+        """查询微信扫码凭证"""
+        user_identifier = self._sanitize_uid(user_identifier)
+        params = {}
+        if user_identifier:
+            params["user_identifier"] = user_identifier
+        return await self._get(
+            "/api/v1/login/wegame/wechat/token",
+            self._wegame_headers(fw_token, user_identifier),
+            params=params,
+        )
     
     async def qq_qr_login(self, user_identifier: str = "") -> Optional[Dict]:
         """发起 QQ 扫码登录，返回 frameworkToken + qr_image (base64)"""
@@ -310,6 +366,17 @@ class WegameApi():
             params,
         )
     
+    async def get_merchant_info_cs(self):
+        params = {"shop_id": 3019}
+        nowtime = time.time() * 1000
+        data = await self._post(
+            "/api/v1/games/rocom/ingame/merchant/info",
+            self._wegame_headers(),
+            json_data=params,
+        )
+        print(data)
+        return data
+    
     async def get_merchant_info(self, refresh: bool = False):
         """
         获取游戏信息接口
@@ -337,7 +404,6 @@ class WegameApi():
                 return int(start_time) <= nowtime < int(end_time)
             except (TypeError, ValueError):
                 return True
-        
         for item in props:
             if not await is_active(item):
                 continue
@@ -345,7 +411,8 @@ class WegameApi():
                 {
                     "name": item.get("name", "未知商品"),
                     "image": item.get("icon_url", None),
-                    "endtime": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(item['end_time'])/1000))
+                    "starttime": time.strftime("%m月%d日 %H:%M", time.localtime(int(item['start_time'])/1000)),
+                    "endtime": time.strftime("%H:%M", time.localtime(int(item['end_time'])/1000)),
                 }
             )
         
