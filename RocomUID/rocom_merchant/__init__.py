@@ -26,6 +26,11 @@ async def get_merchant_info_list(bot: Bot, ev: Event):
     mesg += f"\n可输入[{P}开启远行商人]订阅远行商人商品信息推送"
     await bot.send(mesg, at_sender=True)
 
+@sv_merchant.on_command(('商人'))
+async def get_merchant_info_list_cs(bot: Bot, ev: Event):
+    merchant_info = await wegame_api.get_merchant_info_cs()
+    await bot.send(str(merchant_info), at_sender=True)
+
 # 每日定点执行远行商人推送
 @scheduler.scheduled_job('cron', hour ='*', minute='05')
 async def refresh_merchant_info():
