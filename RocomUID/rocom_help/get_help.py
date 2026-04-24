@@ -23,14 +23,14 @@ async def get_help_data() -> Dict[str, PluginHelp]:
 
 async def get_help():
     return await get_new_help(
-        plugin_name="RocomUID",
+        plugin_name="菲比洛克王国插件",
         plugin_info={f"v{RocomUID_version}": ""},
         plugin_icon=Image.open(ICON),
         plugin_help=await get_help_data(),
         plugin_prefix=PREFIX,
         help_mode="dark",
         banner_bg=Image.open(TEXT_PATH / "banner_bg.jpg"),
-        banner_sub_text="携宠并肩战斗-魔法世界等你揭秘",
+        banner_sub_text="现在是菲比王朝时刻~拉菲比请发送【fb拉群】~",
         help_bg=Image.open(TEXT_PATH / "bg.jpg"),
         cag_bg=Image.open(TEXT_PATH / "cag_bg.png"),
         item_bg=Image.open(TEXT_PATH / "item.png"),
