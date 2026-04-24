@@ -4,8 +4,9 @@ from gsuid_core.logger import logger
 from gsuid_core.models import Event
 from gsuid_core.subscribe import Subscribe, gs_subscribe
 from gsuid_core.sv import SV
-from ..utils.error_reply import prefix as P
+from ..utils.error_reply import get_prefix
 
+PREFIX = get_prefix()
 sv_self_config = SV("洛克王国配置")
 
 PRIV_MAP = {
@@ -23,7 +24,7 @@ async def open_switch_func(bot: Bot, ev: Event):
 
     if config_name not in PRIV_MAP:
         return await bot.send(
-            f'🔨 [洛克王国服务]\n❌ 请输入正确的功能名称...\n🚩 例如: {P}开启远行商人'
+            f'🔨 [洛克王国服务]\n❌ 请输入正确的功能名称...\n🚩 例如: {PREFIX}开启远行商人'
         )
     
     if ev.group_id:
@@ -72,7 +73,7 @@ async def open_switch_func(bot: Bot, ev: Event):
             im += f'\n🔧 并设置了触发阈值为{PRIV_MAP[config_name]}!'
             if not await gs_subscribe.get_subscribe('[洛克王国] 推送', uid=uid):
                 im += '\n⚠ 警告: 由于未打开推送总开关, 所以此项设置可能无效！'
-                im += f'如需打开总开关, 请发送命令开启推送: {P}开启推送！'
+                im += f'如需打开总开关, 请发送命令开启推送: {PREFIX}开启推送！'
     else:
         data = await gs_subscribe.get_subscribe(
             c_name,

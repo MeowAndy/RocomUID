@@ -6,6 +6,9 @@ from gsuid_core.models import Event
 from ..utils.map.rocom_map import rocom_name_list, rocom_group_list, rocom_list, rocom_skill_list, characteristic_list, skill_list, rocom_egg_build
 from .draw_info_image import draw_rocom_info
 from ..utils.convert import get_rocom_name, rocom_egg_conf
+from ..utils.error_reply import get_prefix
+
+PREFIX = get_prefix()
 
 async def is_numeric(string):
     try:
@@ -14,7 +17,7 @@ async def is_numeric(string):
     except ValueError:
         return False
 
-sv_rc_rocom_info = SV('rc基础信息查询', priority=5)
+sv_rc_rocom_info = SV(f'{PREFIX}基础信息查询', priority=5)
 
 @sv_rc_rocom_info.on_command(('精灵蛋', '查蛋'))
 async def get_rocom_egg_name(bot: Bot, ev: Event):
@@ -193,7 +196,7 @@ async def find_rocom_list_info(bot: Bot, ev: Event):
             #print(find_cocom_list)
         rocom_find_list = copy.deepcopy(find_cocom_list)
     if len(find_cocom_list) > 0:
-        mes = f"一共查找到{len(find_cocom_list)}只符合条件的精灵\n具体信息请输入rc图鉴【精灵名】查询\n"
+        mes = f"一共查找到{len(find_cocom_list)}只符合条件的精灵\n具体信息请输入{PREFIX}图鉴【精灵名】查询\n"
         if len(find_cocom_list) > 750:
             mes += f"超过700只了，这不是到处都是吗"
         else:

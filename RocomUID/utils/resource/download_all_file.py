@@ -1,5 +1,6 @@
 from gsuid_core.utils.download_resource.download_core import download_all_file
 
+from ...rocom_config.rocom_config import get_rc_prefix
 from .RESOURCE_PATH import ROCOM_ICON_PATH, ROCOM_SKILL_PATH, ROCOM_CHARACTER_PATH, ROCOM_HEAD_PATH
 
 
@@ -13,4 +14,4 @@ async def check_use():
             "resource/headicon": ROCOM_HEAD_PATH,
         },
     )
-    return "rc全部资源下载完成!"
+    return f"{get_rc_prefix()}全部资源下载完成!"

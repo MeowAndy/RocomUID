@@ -21,7 +21,7 @@
 	  {
         "name": "洛克档案",
         "desc": "洛克档案",
-        "eg": "洛克档案/rcuid",
+        "eg": "洛克档案/uid",
         "need_ck": true,
         "need_sk": true,
         "need_admin": false

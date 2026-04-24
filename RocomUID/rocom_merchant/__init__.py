@@ -10,17 +10,21 @@ from datetime import datetime, timedelta
 from ..utils.rocom_api import wegame_api
 from gsuid_core.subscribe import gs_subscribe
 from gsuid_core.aps import scheduler
-from ..utils.error_reply import prefix as P
+from ..utils.error_reply import get_prefix
 from ..rocom_config.rocom_config import RC_CONFIG
 from .draw_info_image import draw_merchant_info
 
-sv_merchant = SV('rc远行商人事件', priority=5)
+PREFIX = get_prefix()
+sv_merchant = SV(f'{PREFIX}远行商人事件', priority=5)
 
 @sv_merchant.on_command(('远行商人'))
 async def get_merchant_info_list(bot: Bot, ev: Event):
     merchant_info = await wegame_api.get_merchant_info(refresh=True)
     if len(merchant_info) == 0:
-        return await bot.send(f"远行商人商品未刷新\n可输入[{P}开启远行商人]订阅远行商人商品信息推送", at_sender=True)
+        return await bot.send(
+            f"远行商人商品未刷新\n可输入[{PREFIX}开启远行商人]订阅远行商人商品信息推送",
+            at_sender=True,
+        )
     im = await draw_merchant_info(merchant_info)
     await bot.send(im, at_sender=True)
 

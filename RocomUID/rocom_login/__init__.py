@@ -14,8 +14,10 @@ from ..utils.error_reply import get_error
 from gsuid_core.logger import logger
 from ..utils.database.model import RocomUser
 from gsuid_core.utils.image.convert import convert_img
+from ..utils.error_reply import get_prefix
 
-sv_user_login = SV('rc用户登录', priority=5)
+PREFIX = get_prefix()
+sv_user_login = SV(f'{PREFIX}用户登录', priority=5)
 
 @sv_user_login.on_command(('QQ登录','QQ扫码'))
 async def rocom_qq_login(bot: Bot, ev: Event):

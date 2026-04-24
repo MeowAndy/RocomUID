@@ -12,11 +12,12 @@ from gsuid_core.logger import logger
 from ..utils.database.model import RocomUser
 from ..utils.message import send_diff_msg
 from ..utils.api_client import APIClient
-from ..utils.error_reply import prefix as P
+from ..utils.error_reply import get_prefix
 from ..utils.convert import get_rocom_name2id
 from .draw_info_image import draw_user_info, draw_user_info_wegame
 
-sv_user_info = SV('rc用户信息查询', priority=5)
+PREFIX = get_prefix()
+sv_user_info = SV(f'{PREFIX}用户信息查询', priority=5)
 
 # @sv_user_info.on_command(('我的信息','uid'))
 # async def get_my_user_info(bot: Bot, ev: Event):
@@ -39,7 +40,7 @@ sv_user_info = SV('rc用户信息查询', priority=5)
 async def get_my_user_info_wegame(bot: Bot, ev: Event):
     fw_token = await RocomUser.select_rocom_fw_token(ev.user_id, ev.bot_self_id)
     if not fw_token:
-        return await bot.send(f"没有获取到您的登录状态，请输入{P}QQ登录/{P}WX登录，进行绑定后再查询")
+        return await bot.send(f"没有获取到您的登录状态，请输入{PREFIX}QQ登录/{PREFIX}WX登录，进行绑定后再查询")
     await bot.send("正在获取洛克王国数据...")
     role_task = wegame_api.get_role(fw_token)
     coll_task = wegame_api.get_collection(fw_token)
@@ -147,7 +148,12 @@ async def add_my_user_token(bot: Bot, ev: Event):
     user_id = ev.user_id
     args = ev.text.split()
     if len(args) < 1:
-        return await bot.send("请输入您需要绑定的token，用空格隔开!\n例rc绑定token xxtokenxx xxopenidxx\ntoken：用户authorization字段。\ntoken获取方式请输入【rctoken帮助】查询")
+        return await bot.send(
+            f"请输入您需要绑定的token，用空格隔开!\n"
+            f"例{PREFIX}绑定token xxtokenxx xxopenidxx\n"
+            "token：用户authorization字段。\n"
+            f"token获取方式请输入【{PREFIX}token帮助】查询"
+        )
     bind_uid = await RocomUser.select_rocom_user(ev.user_id, ev.bot_self_id)
     if not bind_uid:
         return await bot.send("你还没有绑定RC_UID哦!")
@@ -204,7 +210,14 @@ async def add_my_user_token(bot: Bot, ev: Event):
 
 @sv_user_info.on_fullmatch("token帮助")
 async def send_bind_card(bot: Bot, ev: Event):
-    mes = "token为洛克王国小程序的Authorization字段\n1·准备好常用的抓包软件(如Fiddler)\n2·打开洛克王国小程序，点击我的，打开个人信息页面\n3·在抓包软件中找到数据的链接(通常为morefun·game·qq·com/)\n4·选中后进入查看抓包信息，在信息中找到Authorization字段复制\n5·返回机器人，输入rc绑定token+你获取到的Authorization完成绑定"
+    mes = (
+        "token为洛克王国小程序的Authorization字段\n"
+        "1·准备好常用的抓包软件(如Fiddler)\n"
+        "2·打开洛克王国小程序，点击我的，打开个人信息页面\n"
+        "3·在抓包软件中找到数据的链接(通常为morefun·game·qq·com/)\n"
+        "4·选中后进入查看抓包信息，在信息中找到Authorization字段复制\n"
+        f"5·返回机器人，输入{PREFIX}绑定token+你获取到的Authorization完成绑定"
+    )
     await bot.send(mes)
 
 @sv_user_info.on_fullmatch("绑定信息")
