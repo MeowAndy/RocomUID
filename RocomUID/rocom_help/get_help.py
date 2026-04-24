@@ -23,7 +23,7 @@ async def get_help_data() -> Dict[str, PluginHelp]:
 
 async def get_help():
     return await get_new_help(
-        plugin_name="菲比洛克王国插件",
+        plugin_name="菲比洛克王国",
         plugin_info={f"v{RocomUID_version}": ""},
         plugin_icon=Image.open(ICON),
         plugin_help=await get_help_data(),
