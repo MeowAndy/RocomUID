@@ -1,11 +1,29 @@
 from copy import deepcopy
+import json
 
+from gsuid_core.data_store import get_res_path
 from gsuid_core.utils.error_reply import ERROR_CODE
 from gsuid_core.sv import get_plugin_available_prefix
 
 
+def _get_prefix_from_config() -> str:
+    try:
+        cfg_path = get_res_path() / "RocomUID" / "config.json"
+        if not cfg_path.exists():
+            return "rc"
+        data = json.loads(cfg_path.read_text("utf-8"))
+        value = data.get("RCPrefix", "rc")
+        value = str(value).strip()
+        return value or "rc"
+    except Exception:
+        return "rc"
+
+
 def get_prefix() -> str:
-    return get_plugin_available_prefix("RocomUID")
+    try:
+        return get_plugin_available_prefix("RocomUID")
+    except Exception:
+        return _get_prefix_from_config()
 
 
 prefix = get_prefix()
