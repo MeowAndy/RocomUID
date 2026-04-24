@@ -42,7 +42,7 @@
       {
         "name": "订阅远行商人",
         "desc": "订阅远行商人",
-        "eg": "开启远行商人",
+        "eg": "开启/关闭远行商人",
         "need_ck": false,
         "need_sk": false,
         "need_admin": false
